@@ -33,7 +33,6 @@ echo -e "\e[00;33m# www.rebootuser.com\e[00m"
 echo -e "\e[00;33m# $version\e[00m\n" 
 
 }
-
 debug_info()
 {
 echo "[-] Debug Info" 
